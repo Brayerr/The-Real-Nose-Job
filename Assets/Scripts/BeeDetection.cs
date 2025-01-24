@@ -5,26 +5,29 @@ using UnityEngine;
 public class BeeDetection : MonoBehaviour
 {
     [SerializeField] float maxSize;
-    [SerializeField] float minSize;
     [SerializeField] PlayerController player;
 
     private void Update()
     {
-        transform.localScale = new Vector3(maxSize, maxSize, maxSize) * (player.getCurrentSnotAmount()/player.getMaxSnotAmount());
+        float currArea = Mathf.PI * maxSize * maxSize * (player.getCurrentSnotAmount() / player.getMaxSnotAmount());
+        float currRadius = Mathf.Sqrt(currArea / Mathf.PI);
+
+        transform.position = player.transform.position;
+        transform.localScale = new Vector3(currRadius, currRadius, currRadius);
     }
 
     void OnTriggerEnter(Collider collision)
     {
         Debug.Log("dsa");
-        //if (collision.gameObject.CompareTag("Bee")) 
-        //{
-        //    Debug.Log("ewq");
-        //    if (collision.gameObject.TryGetComponent<Bee>(out Bee bee))
-        //    {
-        //        Debug.Log("zxc");
-        //        bee.NoticePlayerEnteredRange();
-        //    }
-        //}
+        if (collision.gameObject.CompareTag("Bee"))
+        {
+            Debug.Log("ewq");
+            if (collision.gameObject.TryGetComponent<Bee>(out Bee bee))
+            {
+                Debug.Log("zxc");
+                bee.NoticePlayerEnteredRange();
+            }
+        }
     }
 
     void OnTriggerExit(Collider collision)
@@ -33,7 +36,7 @@ public class BeeDetection : MonoBehaviour
         {
             if (collision.gameObject.TryGetComponent<Bee>(out Bee bee))
             {
-                bee.NoticePlayerEnteredRange();
+                bee.NoticePlayerExitedRange();
             }
         }
     }
