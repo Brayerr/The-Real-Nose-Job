@@ -16,8 +16,12 @@ public class PlayerController : MonoBehaviour
     float currentSnortAmount;
 
     [SerializeField] float maxChargeAmount;
+    [SerializeField] float chargingSpeed;
     [SerializeField] float glidePrecentage;
+    [SerializeField] bool slowingUpward;
     float currentChargeAmount;
+    float reachedChargeAmount; //In each seperate charge, player reaches a different charge amount.
+                               //Gliding starting time is dependant on that amount.
 
     bool isGrounded = true;
     [SerializeField] LayerMask groundLayer;
@@ -30,16 +34,18 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
-        if (horizontal != 0) transform.position += new Vector3(speed * horizontal * Time.deltaTime, 0, 0);
+        float horizontalSpeedMod = hasBubble ? glidingSpeedMultiplier : 1;
+        if (horizontal != 0) transform.position += new Vector3(horizontalSpeedMod * speed * horizontal * Time.deltaTime, 0, 0);
 
-        if(Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
         {
-            if(isGrounded) ChargeBubble();
-            
+            if (isGrounded) ChargeBubble();
+
         }
 
         if (Input.GetKeyUp(KeyCode.Space) && isCharging)
         {
+            reachedChargeAmount = currentChargeAmount; //Updating reachedCharge based on latest charging
             isCharging = false;
             isGrounded = false;
             hasBubble = true;
@@ -50,48 +56,51 @@ public class PlayerController : MonoBehaviour
 
         else if (hasBubble && !isAscending) Glide();
 
-        //GroundCheck();
+        GroundCheck();
     }
 
     void ChargeBubble()
     {
         isCharging = true;
-        if (currentChargeAmount <  maxChargeAmount) currentChargeAmount += .1f;
+        if (currentChargeAmount < maxChargeAmount) currentChargeAmount += chargingSpeed;
         Debug.Log($"Charging, {currentChargeAmount}");
         //can add reached max amount logic
     }
 
     void Jump()
     {
-        transform.position += new Vector3(0, risingVerticalSpeed * 1 * Time.deltaTime, 0);
+        float verticalSpeedMod = slowingUpward ? currentChargeAmount/reachedChargeAmount : 1; //Changed jump responsivnes. check if you like it.
+        transform.position += new Vector3(0, verticalSpeedMod * risingVerticalSpeed * 1 * Time.deltaTime, 0);
         currentChargeAmount -= .1f;
-        if (currentChargeAmount < glidePrecentage * maxChargeAmount) isAscending = false;
+        if (currentChargeAmount < glidePrecentage * reachedChargeAmount) isAscending = false;
     }
 
     void Glide()
     {
         transform.position += new Vector3(0, glidingVerticalSpeed * -1 * Time.deltaTime, 0);
-        if (isGrounded) CancelJump();
+        currentChargeAmount -= .1f; //Need to check with game design if during glide player loses charge
+        if (isGrounded) CancelJump(); // after adding gravity we need to need add "|| currentChargeAmount == 0" in condition
     }
 
     void CancelJump()
     {
+        currentChargeAmount = 0;
         hasBubble = false;
     }
 
     private void GroundCheck()
     {
         Debug.Log("Checking ground");
-        RaycastHit2D hitCenter = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
+        //RaycastHit2D hitCenter = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
         //isGrounded = hitCenter.collider != null;
-        if( hitCenter.collider != null )
+        if (Physics.CheckSphere(transform.position - new Vector3(0, 0.5f, 0), groundCheckDistance, groundLayer))
         {
             Debug.Log("Found ground");
             isGrounded = true;
         }
         else
         {
-            Debug.Log($"no ground {hitCenter}");
+            Debug.Log("no ground");
             isGrounded = false;
         }
     }
