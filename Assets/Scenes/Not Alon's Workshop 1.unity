@@ -1436,6 +1436,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1578153138840164509, guid: f6af9f31555558144a7099cfe5161d52, type: 3}
+      propertyPath: chargingSpeed
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1578153138840164509, guid: f6af9f31555558144a7099cfe5161d52, type: 3}
+      propertyPath: sniffingSpeed
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1578153138840164509, guid: f6af9f31555558144a7099cfe5161d52, type: 3}
+      propertyPath: maxChargeAmount
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1578153138840164509, guid: f6af9f31555558144a7099cfe5161d52, type: 3}
       propertyPath: onSniffingChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 96953809}
