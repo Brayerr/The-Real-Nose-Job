@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     float currentSnortAmount;
 
     [SerializeField] float maxChargeAmount;
+    [SerializeField] float minChargeAmount;
     [SerializeField] float chargingSpeed;
     [SerializeField] float glidePrecentage;
     [SerializeField] bool slowingUpward;
@@ -51,9 +52,13 @@ public class PlayerController : MonoBehaviour
             FinishCharging();
         }
 
-        if (hasBubble && isAscending) Jump();
+        if (hasBubble)
+        {
+            if (isAscending) Jump();
+            else Glide();
+            if (Input.GetKeyDown(KeyCode.Space)) CancelJump();
+        }
 
-        else if (hasBubble && !isAscending) Glide();
 
         GroundCheck();
 
@@ -79,9 +84,9 @@ public class PlayerController : MonoBehaviour
     {
         isCharging = true;
         if (currentChargeAmount < maxChargeAmount) currentChargeAmount += chargingSpeed;
-        
+
         //can add reached max amount logic
-        if(currentChargeAmount >= maxChargeAmount)
+        if (currentChargeAmount >= maxChargeAmount)
         {
             currentChargeAmount = maxChargeAmount;
             FinishCharging();
@@ -90,11 +95,16 @@ public class PlayerController : MonoBehaviour
 
     void FinishCharging()
     {
+        //remove charge amount from snotMeter
         reachedChargeAmount = currentChargeAmount; //Updating reachedCharge based on latest charging
-        isCharging = false;
-        isGrounded = false;
-        hasBubble = true;
-        isAscending = true;
+        if (reachedChargeAmount > minChargeAmount)
+        {
+            isCharging = false;
+            isGrounded = false;
+            hasBubble = true;
+            isAscending = true;
+        }
+        else currentChargeAmount = 0;
     }
 
     void Jump()
@@ -116,6 +126,7 @@ public class PlayerController : MonoBehaviour
     {
         currentChargeAmount = 0;
         hasBubble = false;
+        Fall();
     }
 
     void Fall()
