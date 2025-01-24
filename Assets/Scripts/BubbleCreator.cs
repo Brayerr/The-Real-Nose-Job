@@ -35,6 +35,7 @@ public class BubbleCreator : MonoBehaviour
     {
         size += Time.deltaTime;
         current.Expand(Time.deltaTime);
+        current.transform.position += Time.deltaTime / 2 * Vector3.up;
     }
 
     public void LaunchBubble()

@@ -1704,6 +1704,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bubblePrefab: {fileID: -4890431358984764731, guid: a4e5fb5ba3338f44b96a066e9f8a473b, type: 3}
+  spawnLocation: {fileID: 0}
 --- !u!4 &360989730
 Transform:
   m_ObjectHideFlags: 0

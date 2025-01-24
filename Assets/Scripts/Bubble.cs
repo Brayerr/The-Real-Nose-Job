@@ -1,20 +1,19 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class Bubble : MonoBehaviour
 {
-    [SerializeField] Rigidbody rb;
-    [SerializeField] public SpringJoint[] joints;
-    [SerializeField] int testint;
+    public static event Action OnBubbleExploded;
 
+    [SerializeField] public SpringJoint[] joints;
 
     public void Expand(float amount)
     {
         foreach (var joint in joints)
         {
-            joint.transform.position += joint.transform.up * amount;
+            joint.transform.position += joint.transform.up * amount/2;
         }
     }
 
@@ -27,5 +26,27 @@ public class Bubble : MonoBehaviour
             joint.gameObject.GetComponentAtIndex<SpringJoint>(3).connectedAnchor = new Vector3(-size, -size, 0);
         }
 
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        ExplodeWithDelay(0);
+    }
+
+    public void ExplodeWithDelay(float time)
+    {
+        StartCoroutine(ExplodeCoro(time));
+    }
+
+    IEnumerator ExplodeCoro(float time)
+    {
+        yield return new WaitForSeconds(time);
+        Explode();
+    }
+
+    void Explode()
+    {
+        OnBubbleExploded?.Invoke();
+        Destroy(gameObject);
     }
 }
