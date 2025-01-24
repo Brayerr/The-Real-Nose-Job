@@ -199,16 +199,6 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
         }
 
-        //Bottom-Block check
-        if (Physics.CheckSphere(transform.position + new Vector3(0, 0.5f, 0), groundCheckDistance, groundLayer))
-        {
-            isTouchingFromTop = true;
-        }
-        else
-        {
-            isTouchingFromTop = false;
-        }
-
         //Left-Block check
         if (Physics.CheckSphere(transform.position - new Vector3(0.5f, 0, 0), groundCheckDistance, groundLayer))
         {
