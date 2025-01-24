@@ -2,16 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BeeDetection : Interactable
+public class Nest : Interactable
 {
-    [SerializeField] Bee bee;
     public override void OnPlayerCollision(PlayerController controller)
     {
-        bee.NoticePlayerEnteredRange();
+        //use sticks
     }
 
     public override void OnPlayerExit(PlayerController controller)
     {
-        bee.NoticePlayerExitedRange();
+
     }
 }
