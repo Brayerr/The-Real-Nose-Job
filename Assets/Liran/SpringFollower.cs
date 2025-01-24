@@ -8,18 +8,7 @@ public class SpringFollower : MonoBehaviour
     [SerializeField] private float damping = 0.1f;      // How quickly it slows down
     [SerializeField] private Vector3 velocity = Vector3.zero; // Current velocity
 
-    // Optional: if you want a custom "rest offset" (i.e. it doesn't hang straight down),
-    // set this to a local offset from the anchor in Start() or via Inspector.
-    [SerializeField] private Vector3 localRestOffset = new Vector3(0, -2, 0);
 
-    private void Start()
-    {
-        // Place the object at the anchor + some local offset as an initial position
-        // so it starts in the "rest" position you want.
-        // The magnitude of localRestOffset should match desiredDistance,
-        // but it’s okay to adjust or enforce below.
-        transform.position = anchor.TransformPoint(localRestOffset);
-    }
 
     private void Update()
     {
