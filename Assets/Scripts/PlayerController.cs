@@ -10,13 +10,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public UnityEvent<float, float> onChargeAmountChanged;
     [SerializeField] public UnityEvent<float, float> onSniffingChanged;
 
+    [SerializeField] Animator animator;
+
     [SerializeField] float speed = 5f;
     [SerializeField] bool canMove = true;
     [SerializeField] float risingVerticalSpeed;
     [SerializeField] float glidingVerticalSpeed;
     [SerializeField] float glidingSpeedMultiplier;
 
-    float horizontal;
+    public float horizontal;
     float horizontalSpeedMod;
 
     [SerializeField] float maxSnotAmount;
@@ -57,11 +59,16 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");
+        horizontal = Input.GetAxis("Horizontal");
 
         horizontalSpeedMod = hasBubble ? glidingSpeedMultiplier : 1;
 
         if (horizontal != 0 && canMove && !isCharging) Move();
+        else
+        {
+            animator.SetBool("isRunning", false);
+            animator.speed = 1;
+        }
 
         if (isGrounded)
         {
@@ -72,6 +79,7 @@ public class PlayerController : MonoBehaviour
             {
                 Sniff();
             }
+            if (Input.GetKeyUp(KeyCode.LeftControl)) animator.SetBool("isSniffing", false);
         }
 
         if (hasBubble)
@@ -89,15 +97,21 @@ public class PlayerController : MonoBehaviour
 
     void Move()
     {
+        animator.SetBool("isRunning", true);
+        animator.speed = 1.5f;
         if (horizontal > 0)
         {
             //rotate right if not already rotated right
+            transform.LookAt(new Vector3(transform.position.x , transform.position.y, transform.position.z + 1));
+            animator.SetFloat("Blend", horizontal);
             if (isTouchingFromRight) return;
         }
 
         else
         {
             //rotate left if not already rotated left
+            transform.LookAt(new Vector3(transform.position.x , transform.position.y, transform.position.z - 1));
+            animator.SetFloat("Blend", -horizontal);
             if (isTouchingFromLeft) return;
         }
 
@@ -182,6 +196,7 @@ public class PlayerController : MonoBehaviour
     {
         if (isOnFlower && currentSnotAmount < maxSnotAmount)
         {
+            animator.SetBool("isSniffing", true);
             currentSnotAmount += sniffingSpeed;
             onSniffingChanged?.Invoke(currentSnotAmount, maxSnotAmount);
         }
