@@ -18,13 +18,10 @@ public class BeeDetection : MonoBehaviour
 
     void OnTriggerEnter(Collider collision)
     {
-        Debug.Log("dsa");
         if (collision.gameObject.CompareTag("Bee"))
         {
-            Debug.Log("ewq");
             if (collision.gameObject.TryGetComponent<Bee>(out Bee bee))
             {
-                Debug.Log("zxc");
                 bee.NoticePlayerEnteredRange();
             }
         }
