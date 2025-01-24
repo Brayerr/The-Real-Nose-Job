@@ -145,19 +145,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c6e42121f3fb0924a83a8830d331396b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c6e42121f3fb0924a83a8830d331396b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c6e42121f3fb0924a83a8830d331396b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c6e42121f3fb0924a83a8830d331396b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c6e42121f3fb0924a83a8830d331396b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -165,7 +165,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c6e42121f3fb0924a83a8830d331396b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: c6e42121f3fb0924a83a8830d331396b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -489,11 +489,13 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  animator: {fileID: 783523077}
   speed: 5
   canMove: 1
   risingVerticalSpeed: 8
   glidingVerticalSpeed: 3
   glidingSpeedMultiplier: 0.5
+  horizontal: 0
   maxSnortAmount: 10
   maxChargeAmount: 60
   minChargeAmount: 20
