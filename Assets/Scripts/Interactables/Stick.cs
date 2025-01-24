@@ -8,6 +8,7 @@ public class Stick : Interactable
     {
         //get stick
         gameObject.SetActive(false);
+        controller.pickUpBranch();
     }
 
     public override void OnPlayerExit(PlayerController controller)
