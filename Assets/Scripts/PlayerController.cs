@@ -6,11 +6,13 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] float speed = 5f;
+    [SerializeField] bool canMove = true;
     [SerializeField] float risingVerticalSpeed;
     [SerializeField] float glidingVerticalSpeed;
     [SerializeField] float glidingSpeedMultiplier;
 
     float horizontal;
+    float horizontalSpeedMod;
 
     [SerializeField] float maxSnortAmount;
     float currentSnortAmount;
@@ -34,22 +36,19 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
-        float horizontalSpeedMod = hasBubble ? glidingSpeedMultiplier : 1;
-        if (horizontal != 0) transform.position += new Vector3(horizontalSpeedMod * speed * horizontal * Time.deltaTime, 0, 0);
+
+        horizontalSpeedMod = hasBubble ? glidingSpeedMultiplier : 1;
+
+        if (horizontal != 0 && canMove) Move();
 
         if (Input.GetKey(KeyCode.Space))
         {
             if (isGrounded) ChargeBubble();
-
         }
 
         if (Input.GetKeyUp(KeyCode.Space) && isCharging)
         {
-            reachedChargeAmount = currentChargeAmount; //Updating reachedCharge based on latest charging
-            isCharging = false;
-            isGrounded = false;
-            hasBubble = true;
-            isAscending = true;
+            FinishCharging();
         }
 
         if (hasBubble && isAscending) Jump();
@@ -57,19 +56,50 @@ public class PlayerController : MonoBehaviour
         else if (hasBubble && !isAscending) Glide();
 
         GroundCheck();
+
+        if (!hasBubble && !isGrounded) Fall();
+    }
+
+    void Move()
+    {
+        if (horizontal > 0)
+        {
+            //rotate right if not already rotated right
+        }
+
+        else
+        {
+            //rotate left if not already rotated left
+        }
+
+        transform.position += new Vector3(horizontalSpeedMod * speed * horizontal * Time.deltaTime, 0, 0);
     }
 
     void ChargeBubble()
     {
         isCharging = true;
         if (currentChargeAmount < maxChargeAmount) currentChargeAmount += chargingSpeed;
-        Debug.Log($"Charging, {currentChargeAmount}");
+        
         //can add reached max amount logic
+        if(currentChargeAmount >= maxChargeAmount)
+        {
+            currentChargeAmount = maxChargeAmount;
+            FinishCharging();
+        }
+    }
+
+    void FinishCharging()
+    {
+        reachedChargeAmount = currentChargeAmount; //Updating reachedCharge based on latest charging
+        isCharging = false;
+        isGrounded = false;
+        hasBubble = true;
+        isAscending = true;
     }
 
     void Jump()
     {
-        float verticalSpeedMod = slowingUpward ? currentChargeAmount/reachedChargeAmount : 1; //Changed jump responsivnes. check if you like it.
+        float verticalSpeedMod = slowingUpward ? currentChargeAmount / reachedChargeAmount : 1; //Changed jump responsivnes. check if you like it.
         transform.position += new Vector3(0, verticalSpeedMod * risingVerticalSpeed * 1 * Time.deltaTime, 0);
         currentChargeAmount -= .1f;
         if (currentChargeAmount < glidePrecentage * reachedChargeAmount) isAscending = false;
@@ -79,7 +109,7 @@ public class PlayerController : MonoBehaviour
     {
         transform.position += new Vector3(0, glidingVerticalSpeed * -1 * Time.deltaTime, 0);
         currentChargeAmount -= .1f; //Need to check with game design if during glide player loses charge
-        if (isGrounded) CancelJump(); // after adding gravity we need to need add "|| currentChargeAmount == 0" in condition
+        if (isGrounded || currentChargeAmount == 0) CancelJump(); // after adding gravity we need to need add "|| currentChargeAmount == 0" in condition
     }
 
     void CancelJump()
@@ -88,19 +118,19 @@ public class PlayerController : MonoBehaviour
         hasBubble = false;
     }
 
+    void Fall()
+    {
+        transform.position += new Vector3(0, -1 * (speed * 1.5f) * Time.deltaTime, 0);
+    }
+
     private void GroundCheck()
     {
-        Debug.Log("Checking ground");
-        //RaycastHit2D hitCenter = Physics2D.Raycast(transform.position, Vector2.down, groundCheckDistance, groundLayer);
-        //isGrounded = hitCenter.collider != null;
         if (Physics.CheckSphere(transform.position - new Vector3(0, 0.5f, 0), groundCheckDistance, groundLayer))
         {
-            Debug.Log("Found ground");
             isGrounded = true;
         }
         else
         {
-            Debug.Log("no ground");
             isGrounded = false;
         }
     }
