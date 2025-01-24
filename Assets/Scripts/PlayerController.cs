@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour
     private bool isTouchingFromTop;
     private bool isTouchingFromLeft;
     private bool isTouchingFromRight;
+    private int branchAmount = 0;
 
     private void Awake()
     {
@@ -71,12 +72,30 @@ public class PlayerController : MonoBehaviour
         return minChargeAmount;
     }
 
+    public float getHorizontal()
+    {
+        return horizontal;
+    }
+
+    public float getCurrentSnotAmount()
+    {
+        return currentSnotAmount;
+    }
+
+    public float getMaxSnotAmount()
+    {
+        return maxSnotAmount;
+    }
+
+    public int getBranchAmount()
+    {
+        return branchAmount;
+    }
 
     public void SetCanMove(bool b)
     {
         canMove = b;
     }
-
 
     void Update()
     {
@@ -235,6 +254,11 @@ public class PlayerController : MonoBehaviour
             currentSnotAmount += sniffingSpeed * Time.deltaTime;
             onSniffingChanged?.Invoke(currentSnotAmount, maxSnotAmount);
         }
+    }
+
+    public void pickUpBranch()
+    {
+        branchAmount++;
     }
 
     private void GroundCheck()

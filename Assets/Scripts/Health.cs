@@ -9,6 +9,10 @@ public class Health : MonoBehaviour
     [SerializeField] float takeDamageCooldownTime;
     bool canTakeDamage = true;
 
+    private void Start()
+    {
+        currentHP = maxHP;
+    }
 
     public void TakeDamage(int damage)
     {

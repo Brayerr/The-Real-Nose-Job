@@ -14,15 +14,27 @@ public class PlayerCollision : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        try
+        {
+            other.gameObject.GetComponent<Interactable>().OnPlayerCollision(controller);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning(e);
+        }
 
-        other.gameObject.GetComponent<Interactable>().OnPlayerCollision(controller);
-        
     }
 
     private void OnTriggerExit(Collider other)
     {
-        other.gameObject.GetComponent<Interactable>().OnPlayerExit(controller);
-
+        try
+        {
+            other.gameObject.GetComponent<Interactable>().OnPlayerExit(controller);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning(e);
+        }
     }
 
 }
