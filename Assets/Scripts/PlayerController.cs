@@ -8,13 +8,15 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] public UnityEvent<float, float> onChargeAmountChanged;
 
+    [SerializeField] Animator animator;
+
     [SerializeField] float speed = 5f;
     [SerializeField] bool canMove = true;
     [SerializeField] float risingVerticalSpeed;
     [SerializeField] float glidingVerticalSpeed;
     [SerializeField] float glidingSpeedMultiplier;
 
-    float horizontal;
+    public float horizontal;
     float horizontalSpeedMod;
 
     [SerializeField] float maxSnortAmount;
@@ -44,6 +46,8 @@ public class PlayerController : MonoBehaviour
         horizontalSpeedMod = hasBubble ? glidingSpeedMultiplier : 1;
 
         if (horizontal != 0 && canMove) Move();
+        else animator.SetBool("isRunning", false);
+        
 
         if (Input.GetKey(KeyCode.Space))
         {
@@ -72,15 +76,16 @@ public class PlayerController : MonoBehaviour
     {
         if (horizontal > 0)
         {
-            //rotate right if not already rotated right
+            //transform.LookAt(new Vector3(transform.position.x, transform.position.y, transform.position.z - 1));
         }
 
         else
         {
-            //rotate left if not already rotated left
+            //transform.LookAt(new Vector3(transform.position.x, transform.position.y, transform.position.z + 1));
         }
 
         transform.position += new Vector3(horizontalSpeedMod * speed * horizontal * Time.deltaTime, 0, 0);
+        animator.SetBool("isRunning", true);
     }
 
     void ChargeBubble()
