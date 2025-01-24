@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] public UnityEvent<float, float> onChargeAmountChanged;
-
-    [SerializeField] Animator animator;
+    [SerializeField] public UnityEvent<float, float> onSniffingChanged;
 
     [SerializeField] float speed = 5f;
     [SerializeField] bool canMove = true;
@@ -16,11 +16,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float glidingVerticalSpeed;
     [SerializeField] float glidingSpeedMultiplier;
 
-    public float horizontal;
+    float horizontal;
     float horizontalSpeedMod;
 
-    [SerializeField] float maxSnortAmount;
-    float currentSnortAmount;
+    [SerializeField] float maxSnotAmount;
+    [SerializeField] float sniffingSpeed;
+    float currentSnotAmount = 0;
 
     [SerializeField] float maxChargeAmount;
     [SerializeField] float minChargeAmount;
@@ -37,7 +38,22 @@ public class PlayerController : MonoBehaviour
 
     bool hasBubble;
     bool isCharging;
+    bool canCharge = true;
     bool isAscending;
+    bool isOnFlower;
+    private bool isTouchingFromTop;
+    private bool isTouchingFromLeft;
+    private bool isTouchingFromRight;
+
+    public void setIsOnFlower(bool b) { 
+        isOnFlower = b;
+    }
+
+    public float getMinChargeAmount()
+    {
+        return minChargeAmount;
+    }
+
 
     void Update()
     {
@@ -45,18 +61,17 @@ public class PlayerController : MonoBehaviour
 
         horizontalSpeedMod = hasBubble ? glidingSpeedMultiplier : 1;
 
-        if (horizontal != 0 && canMove) Move();
-        else animator.SetBool("isRunning", false);
-        
+        if (horizontal != 0 && canMove && !isCharging) Move();
 
-        if (Input.GetKey(KeyCode.Space))
+        if (isGrounded)
         {
-            if (isGrounded) ChargeBubble();
-        }
+            if (Input.GetKey(KeyCode.Space) && canCharge) ChargeBubble();
 
-        if (Input.GetKeyUp(KeyCode.Space) && isCharging)
-        {
-            FinishCharging();
+            if (Input.GetKeyUp(KeyCode.Space) && isCharging) FinishCharging();
+            if (Input.GetKey(KeyCode.LeftControl) && !isCharging)
+            {
+                Sniff();
+            }
         }
 
         if (hasBubble)
@@ -76,16 +91,17 @@ public class PlayerController : MonoBehaviour
     {
         if (horizontal > 0)
         {
-            //transform.LookAt(new Vector3(transform.position.x, transform.position.y, transform.position.z - 1));
+            //rotate right if not already rotated right
+            if (isTouchingFromRight) return;
         }
 
         else
         {
-            //transform.LookAt(new Vector3(transform.position.x, transform.position.y, transform.position.z + 1));
+            //rotate left if not already rotated left
+            if (isTouchingFromLeft) return;
         }
 
         transform.position += new Vector3(horizontalSpeedMod * speed * horizontal * Time.deltaTime, 0, 0);
-        animator.SetBool("isRunning", true);
     }
 
     void ChargeBubble()
@@ -98,7 +114,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //can add reached max amount logic
-        if (currentChargeAmount >= maxChargeAmount)
+        if (currentChargeAmount >= maxChargeAmount || currentChargeAmount >= currentSnotAmount)
         {
             currentChargeAmount = maxChargeAmount;
             onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
@@ -110,15 +126,21 @@ public class PlayerController : MonoBehaviour
     {
         //remove charge amount from snotMeter
         reachedChargeAmount = currentChargeAmount; //Updating reachedCharge based on latest charging
-        if (reachedChargeAmount > minChargeAmount)
+        if (reachedChargeAmount > minChargeAmount && reachedChargeAmount <= currentSnotAmount)
         {
+            Debug.Log($"releasing charge {reachedChargeAmount}, current snot {currentSnotAmount}");
+            currentSnotAmount -= reachedChargeAmount;
             isCharging = false;
             isGrounded = false;
             hasBubble = true;
             isAscending = true;
+            onSniffingChanged?.Invoke(currentSnotAmount, maxSnotAmount);
         }
         else
         {
+            Debug.Log($"Failed charge {reachedChargeAmount}, current snot {currentSnotAmount}");
+
+            isCharging = false;
             currentChargeAmount = 0;
             onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         }
@@ -143,9 +165,11 @@ public class PlayerController : MonoBehaviour
 
     void CancelJump()
     {
+        reachedChargeAmount = 0;
         currentChargeAmount = 0;
         onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         hasBubble = false;
+        isAscending = false;
         Fall();
     }
 
@@ -154,9 +178,19 @@ public class PlayerController : MonoBehaviour
         transform.position += new Vector3(0, -1 * (speed * 1.5f) * Time.deltaTime, 0);
     }
 
+    void Sniff()
+    {
+        if (isOnFlower && currentSnotAmount < maxSnotAmount)
+        {
+            currentSnotAmount += sniffingSpeed;
+            onSniffingChanged?.Invoke(currentSnotAmount, maxSnotAmount);
+        }
+    }
+
     private void GroundCheck()
     {
-        if (Physics.CheckSphere(transform.position - new Vector3(0, 0.5f, 0), groundCheckDistance, groundLayer))
+        //Top-Block check
+        if (!isAscending && Physics.CheckSphere(transform.position - new Vector3(0, 0.5f, 0), groundCheckDistance, groundLayer))
         {
             isGrounded = true;
         }
@@ -164,5 +198,26 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = false;
         }
+
+        //Left-Block check
+        if (Physics.CheckSphere(transform.position - new Vector3(0.5f, 0, 0), groundCheckDistance, groundLayer))
+        {
+            isTouchingFromLeft = true;
+        }
+        else
+        {
+            isTouchingFromLeft = false;
+        }
+
+        //Right-Block check
+        if (Physics.CheckSphere(transform.position + new Vector3(0.5f, 0, 0), groundCheckDistance, groundLayer))
+        {
+            isTouchingFromRight = true;
+        }
+        else
+        {
+            isTouchingFromRight = false;
+        }
+
     }
 }
