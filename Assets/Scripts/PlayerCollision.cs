@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerCollision : MonoBehaviour
 {
-    [SerializeField] Rigidbody2D rb;
+    [SerializeField] Rigidbody rb;
     PlayerController controller;
 
     private void Awake()
@@ -12,15 +12,17 @@ public class PlayerCollision : MonoBehaviour
         controller = GetComponent<PlayerController>();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter(Collider other)
     {
-        collision.gameObject.GetComponent<Interactable>().OnPlayerCollision(controller);
+
+        other.gameObject.GetComponent<Interactable>().OnPlayerCollision(controller);
+        
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    private void OnTriggerExit(Collider other)
     {
-        collision.gameObject.GetComponent<Interactable>().OnPlayerExit(controller);
-    }
+        other.gameObject.GetComponent<Interactable>().OnPlayerExit(controller);
 
+    }
 
 }

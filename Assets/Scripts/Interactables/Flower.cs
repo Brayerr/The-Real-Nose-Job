@@ -6,11 +6,11 @@ public class Flower : Interactable
 {
     public override void OnPlayerCollision(PlayerController controller)
     {
-        //enable recharge
+        controller.setIsOnFlower(true);
     }
 
     public override void OnPlayerExit(PlayerController controller)
     {
-        //disable recharge
+        controller.setIsOnFlower(false);
     }
 }
