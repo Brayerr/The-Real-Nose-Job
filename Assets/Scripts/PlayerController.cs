@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] public UnityEvent<float, float> onChargeAmountChanged;
     [SerializeField] public UnityEvent<float, float> onSniffingChanged;
+    [SerializeField] public UnityEvent<float, float> onJumpCanceled;
+
 
     [SerializeField] Animator animator;
     [SerializeField] BubbleCreator bubbleCreator;
@@ -20,6 +22,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float glidingSpeedMultiplier;
 
     public float horizontal;
+    public float lastHorizontal;
     float horizontalSpeedMod;
 
     [SerializeField] float maxSnotAmount;
@@ -48,7 +51,8 @@ public class PlayerController : MonoBehaviour
     private bool isTouchingFromLeft;
     private bool isTouchingFromRight;
 
-    public void setIsOnFlower(bool b) { 
+    public void setIsOnFlower(bool b)
+    {
         isOnFlower = b;
     }
 
@@ -58,9 +62,17 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    public void SetCanMove(bool b)
+    {
+        canMove = b;
+    }
+
+
     void Update()
     {
         horizontal = Input.GetAxis("Horizontal");
+        if (horizontal > 0) lastHorizontal = 1;
+        else if (horizontal < 0) lastHorizontal = -1;
 
         horizontalSpeedMod = hasBubble ? glidingSpeedMultiplier : 1;
 
@@ -115,7 +127,7 @@ public class PlayerController : MonoBehaviour
         if (horizontal > 0)
         {
             //rotate right if not already rotated right
-            transform.LookAt(new Vector3(transform.position.x , transform.position.y, transform.position.z + 1));
+            transform.LookAt(new Vector3(transform.position.x, transform.position.y, transform.position.z + 1));
             animator.SetFloat("Blend", horizontal);
             if (isTouchingFromRight) return;
         }
@@ -123,7 +135,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             //rotate left if not already rotated left
-            transform.LookAt(new Vector3(transform.position.x , transform.position.y, transform.position.z - 1));
+            transform.LookAt(new Vector3(transform.position.x, transform.position.y, transform.position.z - 1));
             animator.SetFloat("Blend", -horizontal);
             if (isTouchingFromLeft) return;
         }
@@ -155,7 +167,6 @@ public class PlayerController : MonoBehaviour
         reachedChargeAmount = currentChargeAmount; //Updating reachedCharge based on latest charging
         if (reachedChargeAmount > minChargeAmount && reachedChargeAmount <= currentSnotAmount)
         {
-            Debug.Log($"releasing charge {reachedChargeAmount}, current snot {currentSnotAmount}");
             currentSnotAmount -= reachedChargeAmount;
             isCharging = false;
             isGrounded = false;
@@ -165,8 +176,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Failed charge {reachedChargeAmount}, current snot {currentSnotAmount}");
-
             isCharging = false;
             currentChargeAmount = 0;
             onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);

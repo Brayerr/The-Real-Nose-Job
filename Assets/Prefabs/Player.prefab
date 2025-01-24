@@ -31,6 +31,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5375847524541347818}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3564056631651979800
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4920470287134430540}
+  m_Layer: 0
+  m_Name: ShootingSocket
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4920470287134430540
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3564056631651979800}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.56, y: 1.08, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5375847524541347818}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5875545871049008831
 GameObject:
   m_ObjectHideFlags: 0
@@ -222,6 +253,7 @@ GameObject:
   - component: {fileID: 7958597120233129993}
   - component: {fileID: 8346015796763111748}
   - component: {fileID: 4200329166066260734}
+  - component: {fileID: 2766586630270209057}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -245,6 +277,7 @@ Transform:
   - {fileID: 5952027786240116563}
   - {fileID: 2782276959800986241}
   - {fileID: 5421392742536884572}
+  - {fileID: 4920470287134430540}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1578153138840164509
@@ -289,6 +322,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  onJumpCanceled:
+    m_PersistentCalls:
+      m_Calls: []
   animator: {fileID: 2982509693113305014}
   bubbleCreator: {fileID: 4200329166066260734}
   speed: 6.25
@@ -297,11 +333,12 @@ MonoBehaviour:
   glidingVerticalSpeed: 3
   glidingSpeedMultiplier: 0.5
   horizontal: 0
+  lastHorizontal: 0
   maxSnotAmount: 100
-  sniffingSpeed: 0.5
-  maxChargeAmount: 60
+  sniffingSpeed: 30
+  maxChargeAmount: 40
   minChargeAmount: 20
-  chargingSpeed: 0.5
+  chargingSpeed: 20
   glidePrecentage: 0.6
   slowingUpward: 1
   groundLayer:
@@ -383,6 +420,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bubblePrefab: {fileID: -4890431358984764731, guid: a4e5fb5ba3338f44b96a066e9f8a473b, type: 3}
   spawnLocation: {fileID: 5421392742536884572}
+--- !u!114 &2766586630270209057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8333522475606166911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e90a92a59b3dbc43b6297c320c2fd3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onShotStart:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1578153138840164509}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: SetCanMove
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onShotEnd:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1578153138840164509}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: SetCanMove
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  animator: {fileID: 2982509693113305014}
+  projectile: {fileID: 7956440807249721404, guid: b5f595afcb90b8f49904b9f5fa979819, type: 3}
+  shootingSocket: {fileID: 4920470287134430540}
+  playerController: {fileID: 1578153138840164509}
+  shootingCooldownTime: 3
+  windupTime: 1.2
 --- !u!1001 &6130349904031490232
 PrefabInstance:
   m_ObjectHideFlags: 0
