@@ -254,6 +254,7 @@ GameObject:
   - component: {fileID: 8346015796763111748}
   - component: {fileID: 4200329166066260734}
   - component: {fileID: 2766586630270209057}
+  - component: {fileID: 1789491006676946356}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -364,8 +365,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.93005353
+  m_Center: {x: 0.08994645, y: 0.99, z: 0}
 --- !u!54 &7958597120233129993
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -468,6 +469,21 @@ MonoBehaviour:
   playerController: {fileID: 1578153138840164509}
   shootingCooldownTime: 3
   windupTime: 1.2
+--- !u!114 &1789491006676946356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8333522475606166911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 658c75091e8cf704db5ba85ec45cb230, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHP: 3
+  currentHP: 0
+  takeDamageCooldownTime: 3
 --- !u!1001 &6130349904031490232
 PrefabInstance:
   m_ObjectHideFlags: 0
