@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] public UnityEvent<float, float> onChargeAmountChanged;
+
     [SerializeField] float speed = 5f;
     [SerializeField] bool canMove = true;
     [SerializeField] float risingVerticalSpeed;
@@ -83,12 +86,17 @@ public class PlayerController : MonoBehaviour
     void ChargeBubble()
     {
         isCharging = true;
-        if (currentChargeAmount < maxChargeAmount) currentChargeAmount += chargingSpeed;
+        if (currentChargeAmount < maxChargeAmount)
+        {
+            currentChargeAmount += chargingSpeed;
+            onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
+        }
 
         //can add reached max amount logic
         if (currentChargeAmount >= maxChargeAmount)
         {
             currentChargeAmount = maxChargeAmount;
+            onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
             FinishCharging();
         }
     }
@@ -104,7 +112,11 @@ public class PlayerController : MonoBehaviour
             hasBubble = true;
             isAscending = true;
         }
-        else currentChargeAmount = 0;
+        else
+        {
+            currentChargeAmount = 0;
+            onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
+        }
     }
 
     void Jump()
@@ -112,6 +124,7 @@ public class PlayerController : MonoBehaviour
         float verticalSpeedMod = slowingUpward ? currentChargeAmount / reachedChargeAmount : 1; //Changed jump responsivnes. check if you like it.
         transform.position += new Vector3(0, verticalSpeedMod * risingVerticalSpeed * 1 * Time.deltaTime, 0);
         currentChargeAmount -= .1f;
+        onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         if (currentChargeAmount < glidePrecentage * reachedChargeAmount) isAscending = false;
     }
 
@@ -119,12 +132,14 @@ public class PlayerController : MonoBehaviour
     {
         transform.position += new Vector3(0, glidingVerticalSpeed * -1 * Time.deltaTime, 0);
         currentChargeAmount -= .1f; //Need to check with game design if during glide player loses charge
+        onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         if (isGrounded || currentChargeAmount == 0) CancelJump(); // after adding gravity we need to need add "|| currentChargeAmount == 0" in condition
     }
 
     void CancelJump()
     {
         currentChargeAmount = 0;
+        onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         hasBubble = false;
         Fall();
     }
