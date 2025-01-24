@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Bee : Interactable
 {
@@ -12,47 +13,42 @@ public class Bee : Interactable
     [SerializeField] float chaseSpeed;
 
     PlayerController player;
-    bool isPlayerInRange;
-    bool isChasing;
+    bool isStanned;
+    bool isChasing = false;
+    bool isForward = true;
 
     private void Start()
     {
-        StartCoroutine(DetectionCoroutine());
+        transform.position = PatrolStart.position;
     }
 
-    private void OnDestroy()
+    private void Update()
     {
-        StopAllCoroutines();
-    }
+        Transform currentDest = isForward ? PatrolEnd : PatrolStart;
 
-    IEnumerator DetectionCoroutine()
-    {
-        while (true)
+        if (!isChasing)
         {
-            yield return new WaitForSeconds(1);
-            if (isPlayerInRange)//and player has snot
+            transform.position = Vector3.MoveTowards(transform.position, currentDest.position, moveSpeed*Time.deltaTime);
+            if (currentDest.position == transform.position)
             {
-                isChasing = true;
+                isForward = !isForward;
+                currentDest = isForward ? PatrolEnd : PatrolStart;
+                transform.LookAt(currentDest);
             }
-            else
-            {
-                StopChasing();
-            }
+        } else
+        {
+            transform.LookAt(player.transform.position);
+            transform.position = Vector3.MoveTowards(transform.position, player.transform.position, chaseSpeed * Time.deltaTime);
         }
+
     }
 
     public void NoticePlayerEnteredRange()
     {
-        isPlayerInRange = true;
+        isChasing = true;
     }
 
     public void NoticePlayerExitedRange()
-    {
-        isPlayerInRange = false;
-        StopChasing();
-    }
-
-    public void StopChasing()
     {
         isChasing = false;
     }

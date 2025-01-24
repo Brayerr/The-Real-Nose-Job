@@ -54,6 +54,20 @@ public class PlayerController : MonoBehaviour
         return minChargeAmount;
     }
 
+    public float getHorizontal()
+    {
+        return horizontal;
+    }
+
+    public float getCurrentSnotAmount()
+    {
+        return currentSnotAmount;
+    }
+
+    public float getMaxSnotAmount()
+    {
+        return maxSnotAmount;
+    }
 
     void Update()
     {

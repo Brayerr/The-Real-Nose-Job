@@ -37,7 +37,7 @@ public class ProjectileShooter : MonoBehaviour
         var proj = Instantiate(projectile, shootingSocket.position, Quaternion.identity);
         if (proj.TryGetComponent<Projectile>(out Projectile booger))
         {
-            booger.horizontal = playerController.horizontal;
+            booger.horizontal = playerController.getHorizontal();
         }
 
         canShoot = false;
