@@ -9,6 +9,11 @@ public class Bubble : MonoBehaviour
 
     [SerializeField] public SpringJoint[] joints;
 
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+    }
+
     public void Expand(float amount)
     {
         foreach (var joint in joints)
@@ -44,7 +49,7 @@ public class Bubble : MonoBehaviour
         Explode();
     }
 
-    void Explode()
+    public void Explode()
     {
         OnBubbleExploded?.Invoke();
         Destroy(gameObject);

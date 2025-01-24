@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] public UnityEvent<float, float> onChargeAmountChanged;
     [SerializeField] public UnityEvent<float, float> onSniffingChanged;
-    [SerializeField] public UnityEvent<float, float> onJumpCanceled;
+    [SerializeField] public UnityEvent onJumpCanceled;
 
 
     [SerializeField] Animator animator;
@@ -50,6 +50,16 @@ public class PlayerController : MonoBehaviour
     private bool isTouchingFromTop;
     private bool isTouchingFromLeft;
     private bool isTouchingFromRight;
+
+    private void Awake()
+    {
+        //Bubble.OnBubbleExploded += CancelJump;
+    }
+
+    private void OnDestroy()
+    {
+        Bubble.OnBubbleExploded -= CancelJump;
+    }
 
     public void setIsOnFlower(bool b)
     {
@@ -92,13 +102,11 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKey(KeyCode.Space) && canCharge)
             {
                 ChargeBubble();
-                bubbleCreator.ExpandBubble();
             }
 
             if (Input.GetKeyUp(KeyCode.Space) && isCharging)
             {
                 FinishCharging();
-                bubbleCreator.LaunchBubble();
             }
             if (Input.GetKey(KeyCode.LeftControl) && !isCharging)
             {
@@ -146,26 +154,28 @@ public class PlayerController : MonoBehaviour
     void ChargeBubble()
     {
         isCharging = true;
-        if (currentChargeAmount < maxChargeAmount)
+        if (currentChargeAmount < maxChargeAmount && currentChargeAmount < currentSnotAmount)
         {
             currentChargeAmount += chargingSpeed * Time.deltaTime;
-            onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
+            bubbleCreator.ExpandBubble();
+            //onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         }
 
         //can add reached max amount logic
-        if (currentChargeAmount >= maxChargeAmount || currentChargeAmount >= currentSnotAmount)
+        else
         {
-            currentChargeAmount = maxChargeAmount;
-            onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
-            FinishCharging();
+            currentChargeAmount = Mathf.Min(maxChargeAmount, currentSnotAmount);
+            //onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
+            //FinishCharging();
         }
+        onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
     }
 
     void FinishCharging()
     {
         //remove charge amount from snotMeter
         reachedChargeAmount = currentChargeAmount; //Updating reachedCharge based on latest charging
-        if (reachedChargeAmount > minChargeAmount && reachedChargeAmount <= currentSnotAmount)
+        if (reachedChargeAmount > minChargeAmount /*&& reachedChargeAmount <= currentSnotAmount*/)
         {
             currentSnotAmount -= reachedChargeAmount;
             isCharging = false;
@@ -173,12 +183,14 @@ public class PlayerController : MonoBehaviour
             hasBubble = true;
             isAscending = true;
             onSniffingChanged?.Invoke(currentSnotAmount, maxSnotAmount);
+            bubbleCreator.LaunchBubble();
         }
         else
         {
             isCharging = false;
             currentChargeAmount = 0;
             onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
+            bubbleCreator.AbortBubble();
         }
     }
 
@@ -196,7 +208,7 @@ public class PlayerController : MonoBehaviour
         transform.position += new Vector3(0, glidingVerticalSpeed * -1 * Time.deltaTime, 0);
         currentChargeAmount -= 10f * Time.deltaTime; //Need to check with game design if during glide player loses charge
         onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
-        if (isGrounded || currentChargeAmount == 0) CancelJump(); // after adding gravity we need to need add "|| currentChargeAmount == 0" in condition
+        if (isGrounded || currentChargeAmount <= 0) CancelJump(); // after adding gravity we need to need add "|| currentChargeAmount == 0" in condition
     }
 
     void CancelJump()
@@ -206,6 +218,7 @@ public class PlayerController : MonoBehaviour
         onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         hasBubble = false;
         isAscending = false;
+        bubbleCreator.AbortBubble();
         Fall();
     }
 

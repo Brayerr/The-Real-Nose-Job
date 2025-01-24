@@ -64,6 +64,14 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.33
       objectReference: {fileID: 0}
+    - target: {fileID: -7523596469828974806, guid: cab4d049437caef42af167a24a8079d5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -5984812830403387093, guid: cab4d049437caef42af167a24a8079d5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: -5564862754263384869, guid: cab4d049437caef42af167a24a8079d5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -76,6 +84,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -0.465
       objectReference: {fileID: 0}
+    - target: {fileID: -5425488812279671980, guid: cab4d049437caef42af167a24a8079d5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: -4824624403309509352, guid: cab4d049437caef42af167a24a8079d5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.33
@@ -88,9 +100,21 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.33
       objectReference: {fileID: 0}
+    - target: {fileID: -785024551138939979, guid: cab4d049437caef42af167a24a8079d5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: cab4d049437caef42af167a24a8079d5, type: 3}
       propertyPath: m_Name
       value: bubble (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: cab4d049437caef42af167a24a8079d5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1324292297121956731, guid: cab4d049437caef42af167a24a8079d5, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2470560511058813579, guid: cab4d049437caef42af167a24a8079d5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -128,6 +152,18 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.465
       objectReference: {fileID: 0}
+    - target: {fileID: 4667512837113253448, guid: cab4d049437caef42af167a24a8079d5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4846198126760108708, guid: cab4d049437caef42af167a24a8079d5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5596050145589436294, guid: cab4d049437caef42af167a24a8079d5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 5659871467814487913, guid: cab4d049437caef42af167a24a8079d5, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.465
@@ -139,6 +175,14 @@ PrefabInstance:
     - target: {fileID: 5659871467814487913, guid: cab4d049437caef42af167a24a8079d5, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6066675315315896829, guid: cab4d049437caef42af167a24a8079d5, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7840656870577703878, guid: cab4d049437caef42af167a24a8079d5, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 9086892379226877740, guid: cab4d049437caef42af167a24a8079d5, type: 3}
       propertyPath: m_LocalPosition.x
@@ -914,7 +958,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b0612833ed9ae34997063010d4af5cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 0}
   joints:
   - {fileID: 4080159749090407339}
   - {fileID: 3873334248217293277}
@@ -924,7 +967,6 @@ MonoBehaviour:
   - {fileID: 1646862131222291913}
   - {fileID: 1846281233429136642}
   - {fileID: 8850823712583668670}
-  testint: 1
 --- !u!1 &8899365810378413286 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1324292297121956731, guid: cab4d049437caef42af167a24a8079d5, type: 3}

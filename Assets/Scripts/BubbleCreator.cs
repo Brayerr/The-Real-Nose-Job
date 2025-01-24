@@ -38,9 +38,18 @@ public class BubbleCreator : MonoBehaviour
         current.transform.position += Time.deltaTime / 2 * Vector3.up;
     }
 
+    public void AbortBubble()
+    {
+        if (current != null)
+        {
+            current.Explode();
+
+        }
+    }
+
     public void LaunchBubble()
     {
-        Destroy(current.gameObject,size);
+        Destroy(current.gameObject, size);
         current.Release(size);
         size = 0;
     }
