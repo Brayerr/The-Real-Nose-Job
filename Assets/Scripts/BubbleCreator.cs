@@ -10,21 +10,37 @@ public class BubbleCreator : MonoBehaviour
     float size = 0;
 
 
-    private void Update()
+    //private void Update()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Space))
+    //    {
+    //        CreateBubble();
+    //    }
+    //    if (Input.GetKey(KeyCode.Space))
+    //    {
+    //        ExpandBubble();
+    //    }
+    //    if (Input.GetKeyUp(KeyCode.Space))
+    //    {
+    //        LaunchBubble();
+    //    }
+    //}
+
+    public void CreateBubble()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            current = Instantiate(bubblePrefab, spawnLocation.position, Quaternion.identity);
-        }
-        if (Input.GetKey(KeyCode.Space))
-        {
-            size += Time.deltaTime;
-            current.Expand(Time.deltaTime);
-        }
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            current.Release(size);
-            size = 0;
-        }
+        current = Instantiate(bubblePrefab, spawnLocation);
+    }
+
+    public void ExpandBubble()
+    {
+        size += Time.deltaTime;
+        current.Expand(Time.deltaTime);
+    }
+
+    public void LaunchBubble()
+    {
+        Destroy(current.gameObject,size);
+        current.Release(size);
+        size = 0;
     }
 }

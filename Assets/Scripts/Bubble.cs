@@ -26,5 +26,6 @@ public class Bubble : MonoBehaviour
             joint.GetComponent<Rigidbody>().isKinematic = false;
             joint.gameObject.GetComponentAtIndex<SpringJoint>(3).connectedAnchor = new Vector3(-size, -size, 0);
         }
+
     }
 }
