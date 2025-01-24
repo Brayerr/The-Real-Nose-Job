@@ -254,11 +254,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  canMove: 1
   risingVerticalSpeed: 12
   glidingVerticalSpeed: 3
   glidingSpeedMultiplier: 0.5
   maxSnortAmount: 10
   maxChargeAmount: 60
+  minChargeAmount: 20
   chargingSpeed: 0.07
   glidePrecentage: 0.6
   slowingUpward: 1
