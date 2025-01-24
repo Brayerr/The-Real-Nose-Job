@@ -41,6 +41,9 @@ public class PlayerController : MonoBehaviour
     bool canCharge = true;
     bool isAscending;
     bool isOnFlower;
+    private bool isTouchingFromTop;
+    private bool isTouchingFromLeft;
+    private bool isTouchingFromRight;
 
     public void setIsOnFlower(bool b) { 
         isOnFlower = b;
@@ -89,11 +92,13 @@ public class PlayerController : MonoBehaviour
         if (horizontal > 0)
         {
             //rotate right if not already rotated right
+            if (isTouchingFromRight) return;
         }
 
         else
         {
             //rotate left if not already rotated left
+            if (isTouchingFromLeft) return;
         }
 
         transform.position += new Vector3(horizontalSpeedMod * speed * horizontal * Time.deltaTime, 0, 0);
@@ -184,6 +189,7 @@ public class PlayerController : MonoBehaviour
 
     private void GroundCheck()
     {
+        //Top-Block check
         if (!isAscending && Physics.CheckSphere(transform.position - new Vector3(0, 0.5f, 0), groundCheckDistance, groundLayer))
         {
             isGrounded = true;
@@ -192,5 +198,36 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = false;
         }
+
+        //Bottom-Block check
+        if (Physics.CheckSphere(transform.position + new Vector3(0, 0.5f, 0), groundCheckDistance, groundLayer))
+        {
+            isTouchingFromTop = true;
+        }
+        else
+        {
+            isTouchingFromTop = false;
+        }
+
+        //Left-Block check
+        if (Physics.CheckSphere(transform.position - new Vector3(0.5f, 0, 0), groundCheckDistance, groundLayer))
+        {
+            isTouchingFromLeft = true;
+        }
+        else
+        {
+            isTouchingFromLeft = false;
+        }
+
+        //Right-Block check
+        if (Physics.CheckSphere(transform.position + new Vector3(0.5f, 0, 0), groundCheckDistance, groundLayer))
+        {
+            isTouchingFromRight = true;
+        }
+        else
+        {
+            isTouchingFromRight = false;
+        }
+
     }
 }
