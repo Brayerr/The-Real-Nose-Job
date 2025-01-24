@@ -9,6 +9,11 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] public UnityEvent<float, float> onChargeAmountChanged;
     [SerializeField] public UnityEvent<float, float> onSniffingChanged;
+    [SerializeField] public UnityEvent<float, float> onJumpCanceled;
+
+
+    [SerializeField] Animator animator;
+    [SerializeField] BubbleCreator bubbleCreator;
 
     [SerializeField] float speed = 5f;
     [SerializeField] bool canMove = true;
@@ -16,7 +21,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float glidingVerticalSpeed;
     [SerializeField] float glidingSpeedMultiplier;
 
-    float horizontal;
+    public float horizontal;
+    public float lastHorizontal;
     float horizontalSpeedMod;
 
     [SerializeField] float maxSnotAmount;
@@ -45,7 +51,8 @@ public class PlayerController : MonoBehaviour
     private bool isTouchingFromLeft;
     private bool isTouchingFromRight;
 
-    public void setIsOnFlower(bool b) { 
+    public void setIsOnFlower(bool b)
+    {
         isOnFlower = b;
     }
 
@@ -69,23 +76,49 @@ public class PlayerController : MonoBehaviour
         return maxSnotAmount;
     }
 
+    public void SetCanMove(bool b)
+    {
+        canMove = b;
+    }
+
+
     void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");
+        horizontal = Input.GetAxis("Horizontal");
+        if (horizontal > 0) lastHorizontal = 1;
+        else if (horizontal < 0) lastHorizontal = -1;
 
         horizontalSpeedMod = hasBubble ? glidingSpeedMultiplier : 1;
 
         if (horizontal != 0 && canMove && !isCharging) Move();
+        else
+        {
+            animator.SetBool("isRunning", false);
+            animator.speed = 1;
+        }
 
         if (isGrounded)
         {
-            if (Input.GetKey(KeyCode.Space) && canCharge) ChargeBubble();
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                bubbleCreator.CreateBubble();
+            }
+            if (Input.GetKey(KeyCode.Space) && canCharge)
+            {
+                ChargeBubble();
+                bubbleCreator.ExpandBubble();
+            }
 
-            if (Input.GetKeyUp(KeyCode.Space) && isCharging) FinishCharging();
+            if (Input.GetKeyUp(KeyCode.Space) && isCharging)
+            {
+                FinishCharging();
+                bubbleCreator.LaunchBubble();
+            }
             if (Input.GetKey(KeyCode.LeftControl) && !isCharging)
             {
                 Sniff();
             }
+            if (Input.GetKeyUp(KeyCode.LeftControl)) animator.SetBool("isSniffing", false);
         }
 
         if (hasBubble)
@@ -103,15 +136,21 @@ public class PlayerController : MonoBehaviour
 
     void Move()
     {
+        animator.SetBool("isRunning", true);
+        animator.speed = 1.5f;
         if (horizontal > 0)
         {
             //rotate right if not already rotated right
+            transform.LookAt(new Vector3(transform.position.x, transform.position.y, transform.position.z + 1));
+            animator.SetFloat("Blend", horizontal);
             if (isTouchingFromRight) return;
         }
 
         else
         {
             //rotate left if not already rotated left
+            transform.LookAt(new Vector3(transform.position.x, transform.position.y, transform.position.z - 1));
+            animator.SetFloat("Blend", -horizontal);
             if (isTouchingFromLeft) return;
         }
 
@@ -123,7 +162,7 @@ public class PlayerController : MonoBehaviour
         isCharging = true;
         if (currentChargeAmount < maxChargeAmount)
         {
-            currentChargeAmount += chargingSpeed;
+            currentChargeAmount += chargingSpeed * Time.deltaTime;
             onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         }
 
@@ -142,7 +181,6 @@ public class PlayerController : MonoBehaviour
         reachedChargeAmount = currentChargeAmount; //Updating reachedCharge based on latest charging
         if (reachedChargeAmount > minChargeAmount && reachedChargeAmount <= currentSnotAmount)
         {
-            Debug.Log($"releasing charge {reachedChargeAmount}, current snot {currentSnotAmount}");
             currentSnotAmount -= reachedChargeAmount;
             isCharging = false;
             isGrounded = false;
@@ -152,8 +190,6 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Failed charge {reachedChargeAmount}, current snot {currentSnotAmount}");
-
             isCharging = false;
             currentChargeAmount = 0;
             onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
@@ -164,7 +200,7 @@ public class PlayerController : MonoBehaviour
     {
         float verticalSpeedMod = slowingUpward ? currentChargeAmount / reachedChargeAmount : 1; //Changed jump responsivnes. check if you like it.
         transform.position += new Vector3(0, verticalSpeedMod * risingVerticalSpeed * 1 * Time.deltaTime, 0);
-        currentChargeAmount -= .1f;
+        currentChargeAmount -= 10f * Time.deltaTime;
         onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         if (currentChargeAmount < glidePrecentage * reachedChargeAmount) isAscending = false;
     }
@@ -172,7 +208,7 @@ public class PlayerController : MonoBehaviour
     void Glide()
     {
         transform.position += new Vector3(0, glidingVerticalSpeed * -1 * Time.deltaTime, 0);
-        currentChargeAmount -= .1f; //Need to check with game design if during glide player loses charge
+        currentChargeAmount -= 10f * Time.deltaTime; //Need to check with game design if during glide player loses charge
         onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         if (isGrounded || currentChargeAmount == 0) CancelJump(); // after adding gravity we need to need add "|| currentChargeAmount == 0" in condition
     }
@@ -196,7 +232,8 @@ public class PlayerController : MonoBehaviour
     {
         if (isOnFlower && currentSnotAmount < maxSnotAmount)
         {
-            currentSnotAmount += sniffingSpeed;
+            animator.SetBool("isSniffing", true);
+            currentSnotAmount += sniffingSpeed * Time.deltaTime;
             onSniffingChanged?.Invoke(currentSnotAmount, maxSnotAmount);
         }
     }

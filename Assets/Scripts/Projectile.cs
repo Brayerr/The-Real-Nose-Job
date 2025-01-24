@@ -9,7 +9,7 @@ public class Projectile : MonoBehaviour
 
     private void Start()
     {
-        horizontal = Input.GetAxis("Horizontal");
+        if (horizontal == 0) horizontal = 1;
     }
 
     private void Update()
