@@ -11,6 +11,7 @@ public class Bee : Interactable
     [SerializeField] Transform PatrolEnd;
     [SerializeField] float moveSpeed;
     [SerializeField] float chaseSpeed;
+    [SerializeField] Health health;
 
     [SerializeField] PlayerController player;
     bool isStanned;
@@ -55,6 +56,7 @@ public class Bee : Interactable
 
     public override void OnPlayerCollision(PlayerController controller)
     {
+        health.TakeDamage(1);
         //take damage
     }
 

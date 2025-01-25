@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public UnityEvent<float, float> onChargeAmountChanged;
     [SerializeField] public UnityEvent<float, float> onSniffingChanged;
     [SerializeField] public UnityEvent<float, float> onJumpCanceled;
+    [SerializeField] public UnityEvent<int> onBranchAmountChange;
 
 
     [SerializeField] Animator animator;
@@ -246,6 +247,7 @@ public class PlayerController : MonoBehaviour
     public void pickUpBranch()
     {
         branchAmount++;
+        onBranchAmountChange.Invoke(branchAmount);
     }
 
     private void GroundCheck()
