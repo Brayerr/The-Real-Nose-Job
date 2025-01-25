@@ -12,7 +12,7 @@ public class Bee : Interactable
     [SerializeField] float moveSpeed;
     [SerializeField] float chaseSpeed;
     [SerializeField] Health health;
-
+    
     [SerializeField] PlayerController player;
     bool isStanned;
     bool isChasing = false;
