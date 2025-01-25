@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="094e2db3-a43d-4757-8ad9-295d38a726c7" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.NoseGuy/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.NoseGuy/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Liran.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Liran.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Shaders/noseguy 1.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Shaders/noseguy 1.controller" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
