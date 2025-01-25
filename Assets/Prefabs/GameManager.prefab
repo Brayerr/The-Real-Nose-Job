@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e6ab00f783925247872217cea6b2716, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  branchAmountNeeded: 0
+  branchAmountNeeded: 3
   winPanel: {fileID: 719233776877029130}
 --- !u!65 &4366897561082707296
 BoxCollider:
