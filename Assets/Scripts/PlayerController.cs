@@ -11,7 +11,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public UnityEvent<float, float> onSniffingChanged;
     [SerializeField] public UnityEvent onJumpCanceled;
 
-
     [SerializeField] Animator animator;
     [SerializeField] BubbleCreator bubbleCreator;
     Transform spawnLoc;
@@ -37,8 +36,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float glidePrecentage;
     [SerializeField] bool slowingUpward;
     float currentChargeAmount;
-    float reachedChargeAmount; //In each seperate charge, player reaches a different charge amount.
-                               //Gliding starting time is dependant on that amount.
+    float reachedChargeAmount;
 
     bool isGrounded = true;
     [SerializeField] LayerMask groundLayer;
@@ -54,9 +52,20 @@ public class PlayerController : MonoBehaviour
     private bool isTouchingFromRight;
     private int branchAmount = 0;
 
+    [SerializeField] float sideTurnSpeed = 5f;
+
+    // New variables for acceleration/deceleration
+    [SerializeField] float acceleration = 10f;
+    [SerializeField] float deceleration = 10f;
+    float currentXSpeed = 0f;
+
+    // New variables for turn blending
+    [SerializeField] float turnBlendSpeed = 5f;
+    float turnBlend = 0f;
+
     private void Awake()
     {
-        //Bubble.OnBubbleExploded += CancelJump;
+        // Bubble.OnBubbleExploded += CancelJump;
     }
 
     private void OnDestroy()
@@ -115,7 +124,10 @@ public class PlayerController : MonoBehaviour
 
         horizontalSpeedMod = hasBubble ? glidingSpeedMultiplier : 1;
 
-        if (horizontal != 0 && canMove && !isCharging) Move();
+        if (horizontal != 0 && canMove && !isCharging)
+        {
+            Move();
+        }
         else
         {
             animator.SetBool("isRunning", false);
@@ -151,7 +163,6 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space)) CancelJump();
         }
 
-
         GroundCheck();
 
         if (!hasBubble && !isGrounded) Fall();
@@ -161,56 +172,84 @@ public class PlayerController : MonoBehaviour
     {
         animator.SetBool("isRunning", true);
         animator.speed = 1.5f;
+
+        Quaternion targetRotation;
+
         if (horizontal > 0)
         {
-            //rotate right if not already rotated right
-            transform.LookAt(new Vector3(transform.position.x, transform.position.y, transform.position.z + 1));
             animator.SetFloat("Blend", horizontal);
             if (isTouchingFromRight) return;
-        }
 
+            // Target rotation when facing right
+            targetRotation = Quaternion.Euler(0, 0, 0);
+        }
         else
         {
-            //rotate left if not already rotated left
-            transform.LookAt(new Vector3(transform.position.x, transform.position.y, transform.position.z - 1));
             animator.SetFloat("Blend", -horizontal);
             if (isTouchingFromLeft) return;
+
+            // Target rotation when facing left
+            targetRotation = Quaternion.Euler(0, -180, 0);
         }
-        if (hasBubble)
+
+        // Rotate smoothly toward target
+        transform.rotation = Quaternion.Slerp(
+            transform.rotation, 
+            targetRotation, 
+            sideTurnSpeed * Time.deltaTime
+        );
+
+
+        // measure how far from the target rotation we are, then move turnBlend in or out
+        float rotationDiff = Quaternion.Angle(transform.rotation, targetRotation);
+        if (rotationDiff > 0.1f)
         {
-            spring.anchor.transform.position += new Vector3(horizontalSpeedMod * speed * horizontal * Time.deltaTime, 0, 0);
+            // qe are actively turning
+            turnBlend = Mathf.MoveTowards(turnBlend, 1f, turnBlendSpeed * Time.deltaTime);
         }
         else
         {
-            transform.position += new Vector3(horizontalSpeedMod * speed * horizontal * Time.deltaTime, 0, 0);
+            // close enough to target rotation, blend back
+            turnBlend = Mathf.MoveTowards(turnBlend, 0f, turnBlendSpeed * Time.deltaTime);
+        }
+        animator.SetFloat("TurnBlend", turnBlend);
+        // ------------------------
+
+        // Apply acceleration/deceleration
+        float targetSpeed = horizontal * speed;
+        float accel = (Mathf.Abs(horizontal) > 0.01f) ? acceleration : deceleration;
+        currentXSpeed = Mathf.MoveTowards(currentXSpeed, targetSpeed, accel * Time.deltaTime);
+
+        if (hasBubble)
+        {
+            spring.anchor.transform.position += new Vector3(horizontalSpeedMod * currentXSpeed * Time.deltaTime, 0, 0);
+        }
+        else
+        {
+            transform.position += new Vector3(horizontalSpeedMod * currentXSpeed * Time.deltaTime, 0, 0);
         }
     }
 
     void ChargeBubble()
     {
         isCharging = true;
+        animator.SetBool("isCharging", true);
         if (currentChargeAmount < maxChargeAmount && currentChargeAmount < currentSnotAmount)
         {
             currentChargeAmount += chargingSpeed * Time.deltaTime;
             bubbleCreator.ExpandBubble();
-            //onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         }
-
-        //can add reached max amount logic
         else
         {
             currentChargeAmount = Mathf.Min(maxChargeAmount, currentSnotAmount);
-            //onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
-            //FinishCharging();
         }
         onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
     }
 
     void FinishCharging()
     {
-        //remove charge amount from snotMeter
-        reachedChargeAmount = currentChargeAmount; //Updating reachedCharge based on latest charging
-        if (reachedChargeAmount > minChargeAmount /*&& reachedChargeAmount <= currentSnotAmount*/)
+        reachedChargeAmount = currentChargeAmount;
+        if (reachedChargeAmount > minChargeAmount)
         {
             currentSnotAmount -= reachedChargeAmount;
             isCharging = false;
@@ -227,13 +266,14 @@ public class PlayerController : MonoBehaviour
             currentChargeAmount = 0;
             onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
             bubbleCreator.AbortBubble();
+            animator.SetBool("isCharging", false);
         }
     }
 
     void Jump()
     {
-        float verticalSpeedMod = slowingUpward ? currentChargeAmount / reachedChargeAmount : 1; //Changed jump responsivnes. check if you like it.
-        spring.anchor.transform.position += new Vector3(0, verticalSpeedMod * risingVerticalSpeed * 1 * Time.deltaTime, 0);
+        float verticalSpeedMod = slowingUpward ? currentChargeAmount / reachedChargeAmount : 1;
+        spring.anchor.transform.position += new Vector3(0, verticalSpeedMod * risingVerticalSpeed * Time.deltaTime, 0);
         currentChargeAmount -= 10f * Time.deltaTime;
         onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         if (currentChargeAmount < glidePrecentage * reachedChargeAmount) isAscending = false;
@@ -242,9 +282,9 @@ public class PlayerController : MonoBehaviour
     void Glide()
     {
         spring.anchor.transform.position += new Vector3(0, glidingVerticalSpeed * -1 * Time.deltaTime, 0);
-        currentChargeAmount -= 10f * Time.deltaTime; //Need to check with game design if during glide player loses charge
+        currentChargeAmount -= 10f * Time.deltaTime;
         onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
-        if (isGrounded || currentChargeAmount <= 0) CancelJump(); // after adding gravity we need to need add "|| currentChargeAmount == 0" in condition
+        if (isGrounded || currentChargeAmount <= 0) CancelJump();
     }
 
     void CancelJump()
@@ -257,6 +297,7 @@ public class PlayerController : MonoBehaviour
         spring.SetAnchor(spawnLoc);
         isAscending = false;
         bubbleCreator.AbortBubble();
+        animator.SetBool("isCharging", false);
         Fall();
     }
 
@@ -282,8 +323,7 @@ public class PlayerController : MonoBehaviour
 
     private void GroundCheck()
     {
-        //Top-Block check
-        if (!isAscending && Physics.CheckSphere(transform.position - new Vector3(0, 0.5f, 0), groundCheckDistance, groundLayer))
+        if (!isAscending && Physics.CheckSphere(transform.position - new Vector3(0, 0.1f, 0), groundCheckDistance, groundLayer))
         {
             isGrounded = true;
         }
@@ -292,7 +332,6 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
         }
 
-        //Left-Block check
         if (Physics.CheckSphere(transform.position - new Vector3(0.5f, 0, 0), groundCheckDistance, groundLayer))
         {
             isTouchingFromLeft = true;
@@ -302,7 +341,6 @@ public class PlayerController : MonoBehaviour
             isTouchingFromLeft = false;
         }
 
-        //Right-Block check
         if (Physics.CheckSphere(transform.position + new Vector3(0.5f, 0, 0), groundCheckDistance, groundLayer))
         {
             isTouchingFromRight = true;
@@ -311,6 +349,5 @@ public class PlayerController : MonoBehaviour
         {
             isTouchingFromRight = false;
         }
-
     }
 }
