@@ -13,7 +13,7 @@ public class Bee : Interactable
     [SerializeField] float chaseSpeed;
     [SerializeField] Health health;
     [SerializeField] int damage;
-
+    [SerializeField] private Animator _beeAnimator;
     [SerializeField] PlayerController player;
     bool isStunned;
     bool isChasing = false;
@@ -32,6 +32,7 @@ public class Bee : Interactable
 
             if (!isChasing)
             {
+                _beeAnimator.SetBool("isChasing",false);
                 transform.position = Vector3.MoveTowards(transform.position, currentDest.position, moveSpeed * Time.deltaTime);
                 if (currentDest.position == transform.position)
                 {
@@ -42,6 +43,7 @@ public class Bee : Interactable
             }
             else
             {
+                _beeAnimator.SetBool("isChasing",true);
                 transform.LookAt(player.transform.position);
                 transform.position = Vector3.MoveTowards(transform.position, player.transform.position, chaseSpeed * Time.deltaTime);
             }
