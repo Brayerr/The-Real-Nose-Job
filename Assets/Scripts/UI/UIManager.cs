@@ -39,11 +39,11 @@ public class UIManager : MonoBehaviour
 
     public void updateStickIcons(int currentStickAmount)
     {
-        sticks[currentStickAmount - 1].color = Color.black;
+        sticks[currentStickAmount - 1].color = Color.white;
     }
     public void updateHeartsAmount(int health)
     {
-        sticks[health].color = Color.black;
+        hearts[health].color = Color.black;
     }
 
     public void ClosePausePanel()
