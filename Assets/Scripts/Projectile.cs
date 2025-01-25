@@ -21,4 +21,6 @@ public class Projectile : MonoBehaviour
     {
         transform.position += new Vector3(horizontal * speed * Time.deltaTime, 0, 0);
     }
+
+
 }
