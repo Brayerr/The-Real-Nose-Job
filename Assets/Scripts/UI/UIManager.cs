@@ -7,6 +7,8 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] Image snotBar;
     [SerializeField] Image chargingBar;
+    [SerializeField] Image[] sticks;
+    [SerializeField] Image[] hearts;
     [SerializeField] PlayerController player;
 
     // Start is called before the first frame update
@@ -29,4 +31,12 @@ public class UIManager : MonoBehaviour
         snotBar.fillAmount = current / max;
     }
 
+    public void updateStickIcons(int currentStickAmount)
+    {
+        sticks[currentStickAmount - 1].color = Color.black;
+    }
+    public void updateHeartsAmount(int health)
+    {
+        sticks[health].color = Color.black;
+    }
 }

@@ -1,13 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Health : MonoBehaviour
 {
     [SerializeField] int maxHP;
     [SerializeField] int currentHP;
     [SerializeField] float takeDamageCooldownTime;
+    [SerializeField] public UnityEvent<int> onHPChanged;
     bool canTakeDamage = true;
+
 
     private void Start()
     {
@@ -19,6 +22,7 @@ public class Health : MonoBehaviour
         if (canTakeDamage)
         {
             currentHP -= damage;
+            onHPChanged.Invoke(currentHP);
             StartCoroutine(TakeDamageCooldown());
             if (currentHP <= 0) Kill();
         }
