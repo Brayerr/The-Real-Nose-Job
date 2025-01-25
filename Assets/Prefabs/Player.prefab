@@ -5135,7 +5135,7 @@ MonoBehaviour:
   speed: 6.25
   canMove: 1
   risingVerticalSpeed: 8
-  glidingVerticalSpeed: 0.1
+  glidingVerticalSpeed: 0.002
   glidingSpeedMultiplier: 0.5
   horizontal: 0
   lastHorizontal: 0

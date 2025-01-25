@@ -277,7 +277,7 @@ public class PlayerController : MonoBehaviour
     void Jump()
     {
         float verticalSpeedMod = slowingUpward ? currentChargeAmount / reachedChargeAmount : 1;
-        spring.anchor.transform.position += new Vector3(0, verticalSpeedMod * risingVerticalSpeed * Time.deltaTime, 0);
+        if(!CeilingCheck()) spring.anchor.transform.position += new Vector3(0, verticalSpeedMod * risingVerticalSpeed * Time.deltaTime, 0);
         currentChargeAmount -= 10f * Time.deltaTime;
         onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         if (currentChargeAmount < glidePrecentage * reachedChargeAmount) isAscending = false;
@@ -326,6 +326,11 @@ public class PlayerController : MonoBehaviour
     {
         branchAmount++;
         onBranchAmountChange.Invoke(branchAmount);
+    }
+
+    private bool CeilingCheck()
+    {
+        return Physics.CheckSphere(transform.position + Vector3.up*2, groundCheckDistance, groundLayer);
     }
 
     private void GroundCheck()
