@@ -8,6 +8,7 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] GameObject welcomePanel;
     [SerializeField] GameObject mainMenuPanel;
     [SerializeField] GameObject levelSelectPanel;
+    [SerializeField] GameObject aboutPanel;
 
     public void StartHereButton()
     {
@@ -29,6 +30,18 @@ public class MainMenuManager : MonoBehaviour
     public void LevelSelectBackButton()
     {
         levelSelectPanel.SetActive(false);
+        mainMenuPanel.SetActive(true);
+    }
+
+    public void AboutButton()
+    {
+        aboutPanel.SetActive(true);
+        mainMenuPanel.SetActive(false);
+    }
+
+    public void AboutBackButton()
+    {
+        aboutPanel.SetActive(false);
         mainMenuPanel.SetActive(true);
     }
 }
