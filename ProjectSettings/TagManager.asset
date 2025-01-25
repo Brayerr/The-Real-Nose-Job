@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Bee
+  - Projectile
   layers:
   - Default
   - TransparentFX
@@ -13,8 +14,8 @@ TagManager:
   - Water
   - UI
   - Flower
-  - 
-  - 
+  - Player
+  - Bubble
   - 
   - 
   - 

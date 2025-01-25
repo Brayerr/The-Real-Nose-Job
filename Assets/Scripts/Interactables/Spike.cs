@@ -15,4 +15,9 @@ public class Spike : Interactable
     {
         
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        other.GetComponent<BubbleController>().GetParentBubble().Explode();
+    }
 }

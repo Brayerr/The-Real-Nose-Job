@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] Animator animator;
     [SerializeField] BubbleCreator bubbleCreator;
+    [SerializeField] ParticleSystem sniffParticle;
     Transform spawnLoc;
     SpringFollower spring;
 
@@ -22,6 +23,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float risingVerticalSpeed;
     [SerializeField] float glidingVerticalSpeed;
     [SerializeField] float glidingSpeedMultiplier;
+    Vector3 glideVerticalDelta;
 
     public float horizontal;
     public float lastHorizontal;
@@ -66,7 +68,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        // Bubble.OnBubbleExploded += CancelJump;
+        Bubble.OnBubbleExploded += CancelJump;
     }
 
     private void OnDestroy()
@@ -213,7 +215,7 @@ public class PlayerController : MonoBehaviour
             // close enough to target rotation, blend back
             turnBlend = Mathf.MoveTowards(turnBlend, 0f, turnBlendSpeed * Time.deltaTime);
         }
-        animator.SetFloat("TurnBlend", turnBlend);
+        //animator.SetFloat("TurnBlend", turnBlend);
         // ------------------------
 
         // Apply acceleration/deceleration
@@ -258,6 +260,7 @@ public class PlayerController : MonoBehaviour
             hasBubble = true;
             spring.isAnchorFollowing = false;
             isAscending = true;
+            glideVerticalDelta = Vector3.zero;
             onSniffingChanged?.Invoke(currentSnotAmount, maxSnotAmount);
             spring.SetAnchor(bubbleCreator.LaunchBubble());
         }
@@ -274,7 +277,7 @@ public class PlayerController : MonoBehaviour
     void Jump()
     {
         float verticalSpeedMod = slowingUpward ? currentChargeAmount / reachedChargeAmount : 1;
-        spring.anchor.transform.position += new Vector3(0, verticalSpeedMod * risingVerticalSpeed * Time.deltaTime, 0);
+        if(!CeilingCheck()) spring.anchor.transform.position += new Vector3(0, verticalSpeedMod * risingVerticalSpeed * Time.deltaTime, 0);
         currentChargeAmount -= 10f * Time.deltaTime;
         onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         if (currentChargeAmount < glidePrecentage * reachedChargeAmount) isAscending = false;
@@ -282,7 +285,8 @@ public class PlayerController : MonoBehaviour
 
     void Glide()
     {
-        spring.anchor.transform.position += new Vector3(0, glidingVerticalSpeed * -1 * Time.deltaTime, 0);
+        glideVerticalDelta += glidingVerticalSpeed * Time.deltaTime * Vector3.down;
+        spring.anchor.transform.position += glideVerticalDelta;
         currentChargeAmount -= 10f * Time.deltaTime;
         onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         if (isGrounded || currentChargeAmount <= 0) CancelJump();
@@ -312,6 +316,7 @@ public class PlayerController : MonoBehaviour
         if (isOnFlower && currentSnotAmount < maxSnotAmount)
         {
             animator.SetBool("isSniffing", true);
+            //sniffParticle
             currentSnotAmount += sniffingSpeed * Time.deltaTime;
             onSniffingChanged?.Invoke(currentSnotAmount, maxSnotAmount);
         }
@@ -321,6 +326,11 @@ public class PlayerController : MonoBehaviour
     {
         branchAmount++;
         onBranchAmountChange.Invoke(branchAmount);
+    }
+
+    private bool CeilingCheck()
+    {
+        return Physics.CheckSphere(transform.position + Vector3.up*2, groundCheckDistance, groundLayer);
     }
 
     private void GroundCheck()

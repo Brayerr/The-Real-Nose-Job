@@ -15,6 +15,8 @@ public class Bee : Interactable
     [SerializeField] int damage;
     [SerializeField] private Animator _beeAnimator;
     [SerializeField] PlayerController player;
+    [SerializeField] GameObject stunBubble;
+
     bool isStunned;
     bool isChasing = false;
     bool isForward = true;
@@ -22,6 +24,7 @@ public class Bee : Interactable
     private void Start()
     {
         transform.position = PatrolStart.position;
+        stunBubble.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -63,7 +66,6 @@ public class Bee : Interactable
     public void SetStunned(bool stunned)
     {
         isStunned = stunned;
-        Debug.Log("bee stunned");
     }
 
     public override void OnPlayerCollision(PlayerController controller)
@@ -81,9 +83,18 @@ public class Bee : Interactable
     {
         if (other.gameObject.CompareTag("Projectile"))
         {
-            Debug.Log("hit");
-            SetStunned(true);
             Destroy(other.gameObject);
+            StartCoroutine(StunCoroutine());
         }
+    }
+
+    IEnumerator StunCoroutine()
+    {
+        SetStunned(true);
+        stunBubble.SetActive(true);
+        stunBubble.transform.eulerAngles = Vector3.zero;
+        yield return new WaitForSeconds(3);
+        SetStunned(false);
+        stunBubble.SetActive(false);
     }
 }

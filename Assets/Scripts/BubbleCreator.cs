@@ -47,8 +47,9 @@ public class BubbleCreator : MonoBehaviour
     {
         if (current != null)
         {
-            current.Explode();
-
+            Bubble b = current;
+            current = null;
+            b.Explode();
         }
     }
 
