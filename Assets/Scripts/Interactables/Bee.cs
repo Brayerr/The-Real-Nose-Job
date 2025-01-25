@@ -63,7 +63,6 @@ public class Bee : Interactable
     public void SetStunned(bool stunned)
     {
         isStunned = stunned;
-        Debug.Log("bee stunned");
     }
 
     public override void OnPlayerCollision(PlayerController controller)
@@ -81,9 +80,15 @@ public class Bee : Interactable
     {
         if (other.gameObject.CompareTag("Projectile"))
         {
-            Debug.Log("hit");
-            SetStunned(true);
             Destroy(other.gameObject);
+            StartCoroutine(StunCoroutine());
         }
+    }
+
+    IEnumerator StunCoroutine()
+    {
+        SetStunned(true);
+        yield return new WaitForSeconds(3);
+        SetStunned(false);
     }
 }
