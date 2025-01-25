@@ -6,19 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="094e2db3-a43d-4757-8ad9-295d38a726c7" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.NoseGuy/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.NoseGuy/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Materials/Green.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Materials/Green.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Models/Bee/bee.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Models/Bee/bee.controller" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Models/Bee/bee.fbx" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Models/Bee/bee.fbx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Models/Bee/bee.fbx.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Models/Bee/bee.fbx.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Models/noseguy 1.fbx" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Models/noseguy 1.fbx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Models/noseguy.fbx" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Models/noseguy.fbx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Player.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Player.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Not Alon's Workshop 1.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Not Alon's Workshop 1.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/PlayerController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/PlayerController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Shaders/ToonLight.shader" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Shaders/ToonLight.shader.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Shaders/Unlit_ToonLight.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Shaders/Unlit_ToonLight.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Shaders/noseguy 1.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Shaders/noseguy 1.controller" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
