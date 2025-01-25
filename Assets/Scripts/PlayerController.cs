@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        // Bubble.OnBubbleExploded += CancelJump;
+        Bubble.OnBubbleExploded += CancelJump;
     }
 
     private void OnDestroy()

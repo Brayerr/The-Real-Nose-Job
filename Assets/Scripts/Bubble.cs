@@ -9,11 +9,6 @@ public class Bubble : MonoBehaviour
 
     [SerializeField] public SpringJoint[] joints;
 
-    private void OnDestroy()
-    {
-        StopAllCoroutines();
-    }
-
     public void Expand(float amount)
     {
         foreach (var joint in joints)
@@ -31,22 +26,6 @@ public class Bubble : MonoBehaviour
             joint.gameObject.GetComponentAtIndex<SpringJoint>(3).connectedAnchor = new Vector3(-size, -size, 0);
         }
 
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        ExplodeWithDelay(0);
-    }
-
-    public void ExplodeWithDelay(float time)
-    {
-        StartCoroutine(ExplodeCoro(time));
-    }
-
-    IEnumerator ExplodeCoro(float time)
-    {
-        yield return new WaitForSeconds(time);
-        Explode();
     }
 
     public void Explode()
