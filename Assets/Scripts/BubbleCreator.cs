@@ -26,6 +26,11 @@ public class BubbleCreator : MonoBehaviour
     //    }
     //}
 
+    public void SetSpawnLocation(Transform location)
+    {
+        spawnLocation = location;
+    }
+
     public void CreateBubble()
     {
         current = Instantiate(bubblePrefab, spawnLocation);
@@ -47,10 +52,11 @@ public class BubbleCreator : MonoBehaviour
         }
     }
 
-    public void LaunchBubble()
+    public Transform LaunchBubble()
     {
-        Destroy(current.gameObject, size);
+        //Destroy(current.gameObject, size);
         current.Release(size);
         size = 0;
+        return current.transform;
     }
 }
