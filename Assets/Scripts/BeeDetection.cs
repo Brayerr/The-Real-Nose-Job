@@ -9,8 +9,9 @@ public class BeeDetection : MonoBehaviour
 
     private void Update()
     {
-        float currArea = Mathf.PI * maxSize * maxSize * (player.getCurrentSnotAmount() / player.getMaxSnotAmount());
-        float currRadius = Mathf.Sqrt(currArea / Mathf.PI);
+        //float currArea = Mathf.PI * maxSize * maxSize * (player.getCurrentSnotAmount() / player.getMaxSnotAmount());
+        //float currRadius = Mathf.Sqrt(currArea / Mathf.PI);
+        float currRadius = maxSize * player.getCurrentSnotAmount() / player.getMaxSnotAmount();
 
         transform.position = player.transform.position;
         transform.localScale = new Vector3(currRadius, currRadius, currRadius);

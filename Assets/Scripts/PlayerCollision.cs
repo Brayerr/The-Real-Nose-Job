@@ -20,6 +20,7 @@ public class PlayerCollision : MonoBehaviour
         }
         catch (System.Exception e)
         {
+            print(other.gameObject);
             Debug.LogWarning(e);
         }
 
@@ -33,6 +34,7 @@ public class PlayerCollision : MonoBehaviour
         }
         catch (System.Exception e)
         {
+            print(other.gameObject);
             Debug.LogWarning(e);
         }
     }
