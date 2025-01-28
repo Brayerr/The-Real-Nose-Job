@@ -44,6 +44,9 @@ public class PlayerController : MonoBehaviour
     bool isGrounded = true;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] float groundCheckDistance = 0.1f;
+    [SerializeField] Vector3 groundCheckPosOffset = new(0, -0.1f, 0);
+    [SerializeField] Vector3 leftCheckPosOffset = new(-0.5f, 0, 0);
+    [SerializeField] Vector3 rightCheckPosOffset = new(0.5f, 0, 0);
 
     bool hasBubble;
     bool isCharging;
@@ -60,7 +63,7 @@ public class PlayerController : MonoBehaviour
     // New variables for acceleration/deceleration
     [SerializeField] float acceleration = 10f;
     [SerializeField] float deceleration = 10f;
-    float currentXSpeed = 0f;
+    [SerializeField] float currentXSpeed = 0f;
 
     // New variables for turn blending
     [SerializeField] float turnBlendSpeed = 5f;
@@ -127,7 +130,7 @@ public class PlayerController : MonoBehaviour
 
         horizontalSpeedMod = hasBubble ? glidingSpeedMultiplier : 1;
 
-        if (horizontal != 0 && canMove && !isCharging)
+        if ((horizontal != 0 || currentXSpeed != 0) && canMove && !isCharging)
         {
             Move();
         }
@@ -181,32 +184,42 @@ public class PlayerController : MonoBehaviour
         if (horizontal > 0)
         {
             animator.SetFloat("Blend", horizontal);
-            if (isTouchingFromRight)
-            {
-                print("touching from right");
-                return;
-            }
 
             // Target rotation when facing right
             targetRotation = Quaternion.Euler(0, 0, 0);
         }
-        else
+        else if (horizontal < 0)
         {
             animator.SetFloat("Blend", -horizontal);
-            if (isTouchingFromLeft)
-            {
-                print("touching from left");
-                return;
-            }
 
             // Target rotation when facing left
             targetRotation = Quaternion.Euler(0, -180, 0);
         }
+        else targetRotation = transform.rotation;
+
+        if (currentXSpeed > 0)
+        {
+            if (isTouchingFromRight)
+            {
+                currentXSpeed = 0;
+                print("touching from right");
+                return;
+            }
+        }
+        else if (currentXSpeed < 0)
+        {
+            if (isTouchingFromLeft)
+            {
+                currentXSpeed = 0;
+                print("touching from left");
+                return;
+            }
+        }
 
         // Rotate smoothly toward target
         transform.rotation = Quaternion.Slerp(
-            transform.rotation, 
-            targetRotation, 
+            transform.rotation,
+            targetRotation,
             sideTurnSpeed * Time.deltaTime
         );
 
@@ -244,6 +257,7 @@ public class PlayerController : MonoBehaviour
     void ChargeBubble()
     {
         isCharging = true;
+        currentXSpeed = 0;
         animator.SetBool("isCharging", true);
         if (currentChargeAmount < maxChargeAmount && currentChargeAmount < currentSnotAmount)
         {
@@ -285,7 +299,7 @@ public class PlayerController : MonoBehaviour
     void Jump()
     {
         float verticalSpeedMod = slowingUpward ? currentChargeAmount / reachedChargeAmount : 1;
-        if(!CeilingCheck()) spring.anchor.transform.position += new Vector3(0, verticalSpeedMod * risingVerticalSpeed * Time.deltaTime, 0);
+        if (!CeilingCheck()) spring.anchor.transform.position += new Vector3(0, verticalSpeedMod * risingVerticalSpeed * Time.deltaTime, 0);
         currentChargeAmount -= 10f * Time.deltaTime;
         onChargeAmountChanged.Invoke(currentChargeAmount, maxChargeAmount);
         if (currentChargeAmount < glidePrecentage * reachedChargeAmount) isAscending = false;
@@ -339,12 +353,12 @@ public class PlayerController : MonoBehaviour
 
     private bool CeilingCheck()
     {
-        return Physics.CheckSphere(transform.position + Vector3.up*2, groundCheckDistance, groundLayer);
+        return Physics.CheckSphere(transform.position + Vector3.up * 2, groundCheckDistance, groundLayer);
     }
 
     private void GroundCheck()
     {
-        if (!isAscending && Physics.CheckSphere(transform.position - new Vector3(0, 0.1f, 0), groundCheckDistance, groundLayer))
+        if (!isAscending && Physics.CheckSphere(transform.position + groundCheckPosOffset, groundCheckDistance, groundLayer))
         {
             isGrounded = true;
         }
@@ -353,7 +367,7 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
         }
 
-        if (Physics.CheckSphere(transform.position - new Vector3(0.5f, 0, 0), groundCheckDistance, groundLayer))
+        if (Physics.CheckSphere(transform.position + leftCheckPosOffset, groundCheckDistance, groundLayer))
         {
             isTouchingFromLeft = true;
         }
@@ -362,7 +376,7 @@ public class PlayerController : MonoBehaviour
             isTouchingFromLeft = false;
         }
 
-        if (Physics.CheckSphere(transform.position + new Vector3(0.5f, 0, 0), groundCheckDistance, groundLayer))
+        if (Physics.CheckSphere(transform.position + rightCheckPosOffset, groundCheckDistance, groundLayer))
         {
             isTouchingFromRight = true;
         }
@@ -374,6 +388,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Gizmos.DrawSphere(transform.position + new Vector3(0.5f, 0, 0), groundCheckDistance);
+        Gizmos.DrawSphere(transform.position + rightCheckPosOffset, groundCheckDistance);
+        Gizmos.DrawSphere(transform.position + leftCheckPosOffset, groundCheckDistance);
+        Gizmos.DrawSphere(transform.position + groundCheckPosOffset, groundCheckDistance);
     }
 }

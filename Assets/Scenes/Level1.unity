@@ -3967,6 +3967,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1578153138840164509, guid: f6af9f31555558144a7099cfe5161d52, type: 3}
+      propertyPath: leftCheckPosOffset.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1578153138840164509, guid: f6af9f31555558144a7099cfe5161d52, type: 3}
+      propertyPath: rightCheckPosOffset.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1578153138840164509, guid: f6af9f31555558144a7099cfe5161d52, type: 3}
       propertyPath: onBranchAmountChange.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
