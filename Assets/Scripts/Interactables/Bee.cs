@@ -11,7 +11,6 @@ public class Bee : Interactable
     [SerializeField] Transform PatrolEnd;
     [SerializeField] float moveSpeed;
     [SerializeField] float chaseSpeed;
-    [SerializeField] Health health;
     [SerializeField] int damage;
     [SerializeField] private Animator _beeAnimator;
     [SerializeField] PlayerController player;
@@ -32,7 +31,7 @@ public class Bee : Interactable
         if (!isStunned)
         {
             Transform currentDest = isForward ? PatrolEnd : PatrolStart;
-
+            transform.LookAt(currentDest);
             if (!isChasing)
             {
                 _beeAnimator.SetBool("isChasing",false);
@@ -41,7 +40,7 @@ public class Bee : Interactable
                 {
                     isForward = !isForward;
                     currentDest = isForward ? PatrolEnd : PatrolStart;
-                    transform.LookAt(currentDest);
+                    
                 }
             }
             else
@@ -81,8 +80,10 @@ public class Bee : Interactable
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("someone triggered bee");
         if (other.gameObject.CompareTag("Projectile"))
         {
+            Debug.Log("it was booger");
             Destroy(other.gameObject);
             StartCoroutine(StunCoroutine());
         }

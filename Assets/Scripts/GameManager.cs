@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
                     //win condition
                     Debug.Log("you win!");
                     winPanel.SetActive(true);
+                    Time.timeScale = 0;
                 }
                 else
                 {
@@ -37,6 +38,7 @@ public class GameManager : MonoBehaviour
 
     public void MainMenuButton()
     {
+        if(Time.timeScale == 0) Time.timeScale = 1;
         SceneManager.LoadScene(0);
     }
 }

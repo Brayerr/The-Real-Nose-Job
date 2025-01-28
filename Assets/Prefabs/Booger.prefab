@@ -117,7 +117,7 @@ GameObject:
   - component: {fileID: 7295414936740630537}
   - component: {fileID: 6904563868036097902}
   - component: {fileID: -6320929379667345187}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Booger
   m_TagString: Projectile
   m_Icon: {fileID: 0}

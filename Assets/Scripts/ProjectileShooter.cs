@@ -39,6 +39,7 @@ public class ProjectileShooter : MonoBehaviour
 
     IEnumerator ShootingCoroutine()
     {
+        canShoot = false;
         if (animator.GetBool("isRunning"))
         {
             yield return new WaitForSeconds(.2f);
@@ -55,7 +56,6 @@ public class ProjectileShooter : MonoBehaviour
         {
             booger.horizontal = playerController.lastHorizontal;
         }
-        canShoot = false;
         yield return new WaitForSeconds(.5f);
         onShotEnd?.Invoke(true);
         yield return new WaitForSeconds(shootingCooldownTime);
