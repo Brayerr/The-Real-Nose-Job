@@ -14,7 +14,9 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] Animator animator;
     [SerializeField] BubbleCreator bubbleCreator;
-    [SerializeField] ParticleSystem sniffParticle;
+    [SerializeField] public ParticleSystemForceField sniffForceField;
+    [SerializeField] ParticleSystem runningDust;
+    [SerializeField] Flower currentFlower;
     Transform spawnLoc;
     SpringFollower spring;
 
@@ -159,7 +161,11 @@ public class PlayerController : MonoBehaviour
             {
                 Sniff();
             }
-            if (Input.GetKeyUp(KeyCode.LeftControl)) animator.SetBool("isSniffing", false);
+            if (Input.GetKeyUp(KeyCode.LeftControl))
+            {
+                animator.SetBool("isSniffing", false);
+                sniffForceField.endRange = 0;
+            }
         }
 
         if (hasBubble)
@@ -340,6 +346,7 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetBool("isSniffing", true);
             //sniffParticle
+            if(currentFlower != null) sniffForceField.endRange = 1.5f;            
             currentSnotAmount += sniffingSpeed * Time.deltaTime;
             onSniffingChanged?.Invoke(currentSnotAmount, maxSnotAmount);
         }
@@ -361,10 +368,12 @@ public class PlayerController : MonoBehaviour
         if (!isAscending && Physics.CheckSphere(transform.position + groundCheckPosOffset, groundCheckDistance, groundLayer))
         {
             isGrounded = true;
+            runningDust.gameObject.SetActive(true);
         }
         else
         {
             isGrounded = false;
+            runningDust.gameObject.SetActive(false);
         }
 
         if (Physics.CheckSphere(transform.position + leftCheckPosOffset, groundCheckDistance, groundLayer))
@@ -391,5 +400,10 @@ public class PlayerController : MonoBehaviour
         Gizmos.DrawSphere(transform.position + rightCheckPosOffset, groundCheckDistance);
         Gizmos.DrawSphere(transform.position + leftCheckPosOffset, groundCheckDistance);
         Gizmos.DrawSphere(transform.position + groundCheckPosOffset, groundCheckDistance);
+    }
+
+    public void SetCurrentFlower(Flower flower)
+    {
+        currentFlower = flower;
     }
 }
