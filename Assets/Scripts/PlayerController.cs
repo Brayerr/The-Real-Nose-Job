@@ -181,7 +181,11 @@ public class PlayerController : MonoBehaviour
         if (horizontal > 0)
         {
             animator.SetFloat("Blend", horizontal);
-            if (isTouchingFromRight) return;
+            if (isTouchingFromRight)
+            {
+                print("touching from right");
+                return;
+            }
 
             // Target rotation when facing right
             targetRotation = Quaternion.Euler(0, 0, 0);
@@ -189,7 +193,11 @@ public class PlayerController : MonoBehaviour
         else
         {
             animator.SetFloat("Blend", -horizontal);
-            if (isTouchingFromLeft) return;
+            if (isTouchingFromLeft)
+            {
+                print("touching from left");
+                return;
+            }
 
             // Target rotation when facing left
             targetRotation = Quaternion.Euler(0, -180, 0);
@@ -303,11 +311,12 @@ public class PlayerController : MonoBehaviour
         isAscending = false;
         bubbleCreator.AbortBubble();
         animator.SetBool("isCharging", false);
-        Fall();
+        //Fall();
     }
 
     void Fall()
     {
+        print("falling");
         transform.position += new Vector3(0, -1 * (speed * 1.5f) * Time.deltaTime, 0);
     }
 
@@ -361,5 +370,10 @@ public class PlayerController : MonoBehaviour
         {
             isTouchingFromRight = false;
         }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawSphere(transform.position + new Vector3(0.5f, 0, 0), groundCheckDistance);
     }
 }

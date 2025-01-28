@@ -7,7 +7,7 @@ public class Stick : Interactable
     public override void OnPlayerCollision(PlayerController controller)
     {
         //get stick
-        Debug.Log("123231321");
+        Debug.Log("collided with stick");
         gameObject.SetActive(false);
         controller.pickUpBranch();
     }
